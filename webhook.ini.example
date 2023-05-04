@@ -1,0 +1,3 @@
+[Webhook]
+healthy=healthy_url_to_call
+unhealthy=unhealthy_url_to_call

@@ -1,0 +1,9 @@
+[Hive Login]
+username = <Do not manually create this file! Use the 'registerDevice.py' script>
+password = <Do not manually create this file! Use the 'registerDevice.py' script>
+
+[Device Keys]
+group_key = <Do not manually create this file! Use the 'registerDevice.py' script>
+device_key = <Do not manually create this file! Use the 'registerDevice.py' script>
+device_password = <Do not manually create this file! Use the 'registerDevice.py' script>
+

@@ -1,0 +1,4 @@
+[GMail]
+to_smtp = recipient@example.com
+from_smtp = sender@example.com
+subject_text = Hive Accessibility Test
