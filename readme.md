@@ -22,4 +22,6 @@ Ensure that `webhook.ini` is setup before running.
 
 Be aware that the Hive API will report healthy status even if items show offline in their app - sometimes for several minutes.
 
-It is not unusual for a latency of 10 minutes from the system losing power, to the API reporting that.
+It is not unusual for a latency of 10 minutes from the system losing power, to the API reporting an unhealthy status.
+
+Power resumption is generally quicker to report, within 1-2 minutes under normal circumstances.
