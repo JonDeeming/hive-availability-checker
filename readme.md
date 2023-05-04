@@ -17,3 +17,9 @@ The `checkHiveOnline.py` script can then be used (via a _cronjob_ or similar) to
 Ensure that `webhook.ini` is setup before running.
 
 > Note: Ensure you restrict permissions to the `*.ini` files, as they will contain keys and credentials. **Do not commit them to git!**
+
+## Latency
+
+Be aware that the Hive API will report healthy status even if items show offline in their app - sometimes for several minutes.
+
+It is not unusual for a latency of 10 minutes from the system losing power, to the API reporting that.
