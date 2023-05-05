@@ -142,5 +142,7 @@ def main():
     checkTempTime(session, 15, "22:00", "05:00")
     # TODO: Externalize checkTempTime() temps and times.
 
+    logging.info('Checks complete.')
+
 if __name__ == '__main__':
     main()
