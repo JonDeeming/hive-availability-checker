@@ -67,8 +67,13 @@ def notifyWebhook(healthy):
         logging.info('Webhook status code: ' + str(response.status_code))
 
 def checkAccessibility(session, SEND_ON_OK):
-    logging.debug("Climate Device Online: " + str(session.deviceList['climate'][0]['deviceData']['online']))
-    if session.deviceList['climate'][0]['deviceData']['online'] == True:
+    try:
+        onlineStatus = session.deviceList['climate'][0]['deviceData']['online']
+        logging.debug("Climate Device Online: " + str(onlineStatus))
+    except:
+        logging.error('Accessibility data could not be parsed - API response is unreliable, exiting.')
+        exit(1)
+    if onlineStatus == True:
         logging.info('Hive climate is online.')
         if SEND_ON_OK:
             logging.debug('Sending mail notification for online status.')
@@ -107,9 +112,13 @@ def checkHotWater(session):
 
 def checkTempTime(session, maxTemp, startTime, endTime):
     currentTime = datetime.now().strftime("%H:%M")
-    thermostatID = session.deviceList['climate'][0]['hiveID']
-    tempSet = session.data.products[thermostatID]['state']['target']
-    logging.debug('Thermostat is set to ' + str(tempSet))
+    try:
+        thermostatID = session.deviceList['climate'][0]['hiveID']
+        tempSet = session.data.products[thermostatID]['state']['target']
+        logging.debug('Thermostat is set to ' + str(tempSet))
+    except:
+        logging.error('Temperature data could not be parsed - API response is unreliable, exiting.')
+        exit(1)
     if tempSet <= maxTemp:
         logging.debug('Thermostat Set temp is below ' + currentTime + 'C.')
     else:
