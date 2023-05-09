@@ -53,11 +53,17 @@ def notifyWebhook(healthy):
 
     if healthy == True:
         logging.info('Calling healthy webhook.')
-        response = requests.post(healthy_webhook, headers={'Content-Type':'application/json'})
+        try:
+            response = requests.post(healthy_webhook, headers={'Content-Type':'application/json'})
+        except:
+            logging.error('Call to healthy webhook failed.')
         logging.info('Webhook status code: ' + str(response.status_code))
     else:
         logging.info('Calling unhealthy webhook')
-        response = requests.post(unhealthy_webhook, headers={'Content-Type':'application/json'})
+        try:
+            response = requests.post(unhealthy_webhook, headers={'Content-Type':'application/json'})
+        except:
+            logging.error('Call to unhealthy webhook failed.')
         logging.info('Webhook status code: ' + str(response.status_code))
 
 def checkAccessibility(session, SEND_ON_OK):
@@ -66,13 +72,19 @@ def checkAccessibility(session, SEND_ON_OK):
         logging.info('Hive climate is online.')
         if SEND_ON_OK:
             logging.debug('Sending mail notification for online status.')
-            notifyMail('Hive climate system is accessible')
+            try:
+                notifyMail('Hive climate system is accessible')
+            except:
+                logging.error('Could not send healthy notification mail.')
         logging.debug('Sending webhook healthy call.')
         notifyWebhook(True)
     else:
         logging.info('Hive climate is offline.')
         logging.debug('Sending mail notification for offline status.')
-        notifyMail('Hive climate system is unavailable. Check the boiler circuit breaker.')
+        try:
+            notifyMail('Hive climate system is unavailable. Check the boiler circuit breaker.')
+        except:
+            logging.error('Could not send unhealth notification mail.')
         logging.debug('Sending webhook unhealthy call.')
         notifyWebhook(False)
 
@@ -84,7 +96,10 @@ def checkHotWater(session):
         logging.info('Water Heating check complete.')
     else:
         logging.info('Water heating is not in scheduled mode - sending e-mail')
-        notifyMail('Water heating is not in scheduled mode.')
+        try:
+            notifyMail('Water heating is not in scheduled mode.')
+        except:
+            logging.error('Could not send water heating alert mail.')
 
 def checkTempTime(session, maxTemp, startTime, endTime):
     currentTime = datetime.now().strftime("%H:%M")
@@ -99,7 +114,10 @@ def checkTempTime(session, maxTemp, startTime, endTime):
         logging.debug('Is current between start and end? ' + str(is_between(currentTime, (startTime, endTime))))       
         if is_between(currentTime, (startTime, endTime)):
             logging.info('Thermostat is set to ' + str(tempSet) + ', which is over ' + str(maxTemp) + ' - sending e-mail.')
-            notifyMail('Thermostat is set above ' + str(maxTemp) + 'C, and it is getting late.')
+            try:
+                notifyMail('Thermostat is set above ' + str(maxTemp) + 'C, and it is getting late.')
+            except:
+                logging.error('Could not send thermostat temperature warning mail.')
     logging.info('Temperature Set check complete.')
 
 def main():
@@ -126,16 +144,24 @@ def main():
 
     # Login using device credentials.
     logging.debug('Authenticating with Hive.')
-    login = session.login()
-    if login.get("ChallengeName") == DEVICE_REQUIRED:
-        session.deviceLogin()
-    else:
-        logging.error('Login failed - Confirm this device is registered.')
+    try:
+        login = session.login()
+        if login.get("ChallengeName") == DEVICE_REQUIRED:
+            session.deviceLogin()
+        else:
+            logging.error('Login failed - Confirm this device is registered.')
+            exit(1)
+    except:
+        logging.error('Could not login with Hive - aborting.')
         exit(1)
 
     # Create a session, now that we're authenticated and authorized.
     logging.debug('Starting Hive session - querying devices.')
-    session.startSession()
+    try:
+        session.startSession()
+    except:
+        logging.error('Could not start Hive session - aborting.')
+        exit(1)
 
     checkAccessibility(session, SEND_ON_OK)
     checkHotWater(session)
