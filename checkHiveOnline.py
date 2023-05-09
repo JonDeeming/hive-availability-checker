@@ -69,7 +69,8 @@ def notifyWebhook(healthy):
 def checkAccessibility(session, SEND_ON_OK):
     try:
         onlineStatus = session.deviceList['climate'][0]['deviceData']['online']
-        logging.debug("Climate Device Online: " + str(onlineStatus))
+        waterHeaterID = session.deviceList['water_heater'][0]['hiveID']
+        logging.debug("Climate Device " + waterHeaterID + " Online: " + str(onlineStatus))
     except:
         logging.error('Accessibility data could not be parsed - API response is unreliable, exiting.')
         exit(1)
@@ -176,9 +177,9 @@ def main():
         logging.error('Could not start Hive session - aborting.')
         exit(1)
 
-    checkAccessibility(session, SEND_ON_OK)
     checkHotWater(session)
     checkTempTime(session, 15, "22:00", "05:00")
+    checkAccessibility(session, SEND_ON_OK)
     # TODO: Externalize checkTempTime() temps and times.
 
     logging.info('Checks complete.')
