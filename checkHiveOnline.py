@@ -89,9 +89,13 @@ def checkAccessibility(session, SEND_ON_OK):
         notifyWebhook(False)
 
 def checkHotWater(session):
-    waterHeaterID = session.deviceList['water_heater'][0]['hiveID']
-    waterHeaterMode = str(session.data.products[waterHeaterID]['state']['mode'])
-    logging.debug('Water Heater Mode: ' + waterHeaterMode)
+    try:
+        waterHeaterID = session.deviceList['water_heater'][0]['hiveID']
+        waterHeaterMode = str(session.data.products[waterHeaterID]['state']['mode'])
+        logging.debug('Water Heater Mode: ' + waterHeaterMode)
+    except:
+        logging.error('Water heating data could not be parsed - API response is unreliable, exiting.')
+        exit(1)
     if waterHeaterMode == 'SCHEDULE' or waterHeaterMode=='BOOST':
         logging.info('Water Heating check complete.')
     else:
